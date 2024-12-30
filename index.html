@@ -130,6 +130,8 @@
         <input type="number" id="weight" placeholder="Enter your weight">
         <label for="height">Height (cm):</label>
         <input type="number" id="height" placeholder="Enter your height">
+        <label for="bodyFat">Body Fat % (optional):</label>
+        <input type="number" id="bodyFat" placeholder="Enter your body fat percentage (optional)">
         <label for="activity">Activity Level:</label>
         <select id="activity">
             <option value="1.2">Sedentary</option>
@@ -160,14 +162,24 @@
             const age = parseFloat(document.getElementById('age').value);
             const weight = parseFloat(document.getElementById('weight').value);
             const height = parseFloat(document.getElementById('height').value);
+            const bodyFat = parseFloat(document.getElementById('bodyFat').value);
             const activity = parseFloat(document.getElementById('activity').value);
 
-            if (isNaN(age) || isNaN(weight) || isNaN(height) || isNaN(activity)) {
-                document.getElementById('result').innerText = "Please fill out all fields correctly.";
+            if (isNaN(weight) || isNaN(height) || isNaN(activity)) {
+                document.getElementById('result').innerText = "Please fill out all required fields correctly.";
                 return;
             }
 
-            const bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+            let bmr;
+            if (!isNaN(bodyFat)) {
+            // Katch-McArdle formula
+            const leanMass = weight * (1 - bodyFat / 100);
+            bmr = 370 + (21.6 * leanMass);
+            } else {
+            // Mifflin-St Jeor formula
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+
             tdee = bmr * activity;
 
             document.getElementById('result').innerHTML = `
@@ -177,7 +189,7 @@
             // Show deficit section after TDEE calculation
             document.getElementById('deficit-section').style.display = 'block';
         }
-
+        
         function calculateDeficit() {
             const deficitPercent = parseFloat(document.getElementById('deficit').value);
             const deficitCalories = tdee * (deficitPercent / 100);
