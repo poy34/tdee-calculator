@@ -257,6 +257,45 @@
             By following a plan or by following advice provided by Olivia Devall, you assume such risks and waive and release any claim which you may have against Health and Body Nurturing LLC.
         </p>
     </footer>
-    </body>
-    
+    <script>
+        async function sendToMake(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!name || !email) {
+                alert('Please fill in both your name and email address.');
+                return;
+            }
+
+            // Prepare the data
+            const data = {
+                "fields[first_name]": name,
+                email: email,
+            };
+
+            try {
+                // Send data to Make webhook
+                const response = await fetch("https://hook.make.com/your-unique-url", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams(data).toString(),
+                });
+
+                if (response.ok) {
+                    // Show confirmation message
+                    document.getElementById('confirmationMessage').style.display = 'block';
+                } else {
+                    alert('There was an error. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        }
+    </script>
+</body>
 </html>
